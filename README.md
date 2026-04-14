@@ -45,9 +45,7 @@ By default, Rank Math hides the UI for editing `robots.txt` and `.htaccess` on m
 3. Ensure **Rank Math SEO** is installed and active.
 4. Visit **Rank Math → General Settings → Edit robots.txt** / **Edit .htaccess** — the editors should now be available.
 
----
-
-## Configuration
+### Configuration
 
 There is nothing to configure. Activating the plugin is enough.
 
@@ -59,7 +57,7 @@ remove_filter( 'rank_math/can_edit_file', '__return_true' );
 
 ---
 
-## Frequently Asked Questions
+## FAQ
 
 ### Why can't I edit robots.txt / .htaccess in Rank Math on multisite?
 Rank Math disables these editors on multisite by default for safety. This plugin opts your installation back in by returning `true` on the `rank_math/can_edit_file` filter.
