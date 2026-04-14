@@ -98,7 +98,7 @@
 https://github.com/JPKCom/jpkcom-rank-math-options<br />
 <strong>Description:</strong> Opinionated tweaks and options for the
 Rank Math SEO plugin.<br />
-<strong>Version:</strong> 1.0.0<br />
+<strong>Version:</strong> 1.0.1<br />
 <strong>Author:</strong> Jean Pierre Kolb <a href="mailto:jpk@jpkc.com"
 class="email">jpk@jpkc.com</a><br />
 <strong>Author URI:</strong> https://www.jpkc.com/<br />
@@ -110,7 +110,7 @@ htaccess<br />
 <strong>Tested up to:</strong> 7.0<br />
 <strong>Requires PHP:</strong> 8.3<br />
 <strong>Network:</strong> true<br />
-<strong>Stable tag:</strong> 1.0.0<br />
+<strong>Stable tag:</strong> 1.0.1<br />
 <strong>License:</strong> GPL-2.0-or-later<br />
 <strong>License URI:</strong>
 https://www.gnu.org/licenses/gpl-2.0.html<br />
@@ -128,11 +128,20 @@ SEO</a>.</p>
 installations (and on setups where the constant
 <code>RANK_MATH_ADVANCED_MODE</code> is not set). This plugin re-enables
 those editors via the official <code>rank_math/can_edit_file</code>
-filter.</p>
+filter. It also trims a handful of Rank Math defaults that most site
+operators end up disabling manually anyway.</p>
 <h3 id="key-features">Key Features</h3>
 <ul>
 <li><strong>Unlocks robots.txt / .htaccess editing</strong> in Rank Math
 SEO — including on multisite</li>
+<li><strong>Removes the “Powered by Rank Math” HTML comment</strong>
+from the frontend source</li>
+<li><strong>Removes the “Generator” credit line</strong> from Rank
+Math’s XML sitemap</li>
+<li><strong>Disables Rank Math’s anonymous usage tracking /
+telemetry</strong></li>
+<li><strong>Hides the Rank Math admin bar menu</strong> on the frontend
+and in the backend</li>
 <li><strong>Network-ready</strong> — can be network-activated and takes
 effect on every site</li>
 <li><strong>Zero configuration</strong> — no admin page, no settings to
@@ -154,8 +163,7 @@ with SHA256 checksum verification</li>
 robots.txt</strong> / <strong>Edit .htaccess</strong> — the editors
 should now be available.</li>
 </ol>
-<hr />
-<h2 id="configuration">Configuration</h2>
+<h3 id="configuration">Configuration</h3>
 <p>There is nothing to configure. Activating the plugin is enough.</p>
 <p>If you want to disable the behaviour temporarily without deactivating
 the plugin, you can unhook the filter from another plugin or your
@@ -163,7 +171,7 @@ the plugin, you can unhook the filter from another plugin or your
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode php"><code class="sourceCode php"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remove_filter( <span class="st">&#39;rank_math/can_edit_file&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span></code></pre></div>
 <hr />
-<h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
+<h2 id="faq">FAQ</h2>
 <h3
 id="why-cant-i-edit-robots.txt-.htaccess-in-rank-math-on-multisite">Why
 can’t I edit robots.txt / .htaccess in Rank Math on multisite?</h3>
@@ -186,7 +194,21 @@ checksum verification. Updates appear in <strong>Plugins → Installed
 Plugins</strong> just like any plugin from wordpress.org.</p>
 <hr />
 <h2 id="changelog">Changelog</h2>
-<h3 id="section">1.0.0</h3>
+<h3 id="section">1.0.1</h3>
+<ul>
+<li><strong>Remove Rank Math frontend credit</strong> — applies
+<code>rank_math/frontend/remove_credit_notice</code> to strip the
+“Powered by Rank Math” HTML comment</li>
+<li><strong>Remove sitemap credit</strong> — applies
+<code>rank_math/sitemap/remove_credits</code> to remove the “Generator”
+line from the XML sitemap</li>
+<li><strong>Disable telemetry</strong> — applies
+<code>rank_math/usage_tracking</code> returning <code>false</code></li>
+<li><strong>Hide admin bar menu</strong> — removes the Rank Math node
+from the WordPress admin bar via <code>remove_node( 'rank-math' )</code>
+at priority 999</li>
+</ul>
+<h3 id="section-1">1.0.0</h3>
 <ul>
 <li>Initial release</li>
 <li><code>rank_math/can_edit_file</code> filter returning

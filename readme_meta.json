@@ -1,7 +1,7 @@
 {
   "Author": "Jean Pierre Kolb <jpk@jpkc.com>",
   "TextDomain": "jpkcom-rank-math-options",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Description": "Opinionated tweaks and options for the Rank Math SEO plugin.",
   "PluginURI": "https://github.com/JPKCom/jpkcom-rank-math-options",
   "RequiresPlugins": "seo-by-rank-math",
@@ -10,7 +10,7 @@
   "Requiresatleast": "6.9",
   "Network": "true",
   "Testedupto": "7.0",
-  "Stabletag": "1.0.0",
+  "Stabletag": "1.0.1",
   "RequiresPHP": "8.3",
   "License": "GPL-2.0-or-later",
   "LicenseURI": "https://www.gnu.org/licenses/gpl-2.0.html",

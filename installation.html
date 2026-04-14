@@ -9,4 +9,11 @@
 robots.txt</strong> / <strong>Edit .htaccess</strong> — the editors
 should now be available.</li>
 </ol>
+<h3 id="configuration">Configuration</h3>
+<p>There is nothing to configure. Activating the plugin is enough.</p>
+<p>If you want to disable the behaviour temporarily without deactivating
+the plugin, you can unhook the filter from another plugin or your
+<code>functions.php</code>:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remove_filter( <span class="st">&#39;rank_math/can_edit_file&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span></code></pre></div>
 <hr />

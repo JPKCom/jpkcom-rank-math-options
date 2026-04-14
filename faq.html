@@ -1,1 +1,21 @@
-
+<h3
+id="why-cant-i-edit-robots.txt-.htaccess-in-rank-math-on-multisite">Why
+can’t I edit robots.txt / .htaccess in Rank Math on multisite?</h3>
+<p>Rank Math disables these editors on multisite by default for safety.
+This plugin opts your installation back in by returning
+<code>true</code> on the <code>rank_math/can_edit_file</code>
+filter.</p>
+<h3 id="does-this-plugin-require-rank-math-seo">Does this plugin require
+Rank Math SEO?</h3>
+<p>Yes. The plugin header declares
+<code>Requires Plugins: seo-by-rank-math</code>, so WordPress will
+prevent activation until Rank Math SEO is installed and active.</p>
+<h3 id="does-this-plugin-store-any-data-or-add-admin-pages">Does this
+plugin store any data or add admin pages?</h3>
+<p>No. It only hooks into a single Rank Math filter and has no UI, no
+options, and no database writes.</p>
+<h3 id="does-this-plugin-auto-update">Does this plugin auto-update?</h3>
+<p>Yes. It uses a secure, self-hosted GitHub updater with SHA256
+checksum verification. Updates appear in <strong>Plugins → Installed
+Plugins</strong> just like any plugin from wordpress.org.</p>
+<hr />
