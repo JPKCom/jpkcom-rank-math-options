@@ -1,18 +1,36 @@
-<h3 id="section">1.0.1</h3>
+<h3 id="section">1.0.2</h3>
+<ul>
+<li><strong>Fix sitemap credit filter name</strong> — v1.0.1 targeted
+the non-existent <code>rank_math/sitemap/remove_credits</code>; Rank
+Math actually fires the singular
+<code>rank_math/sitemap/remove_credit</code></li>
+<li><strong>Rework telemetry disable</strong> — v1.0.1’s
+<code>rank_math/usage_tracking</code> filter does not exist in Rank
+Math. Replaced with an <code>option_rank-math-options-general</code>
+filter that rewrites the <code>usage_tracking</code> key to
+<code>off</code> on read, which is the only reliable hook point since
+Rank Math’s tracker class reads a plain option</li>
+<li><strong>Clean up <code>llms.txt</code></strong> — strips Rank Math’s
+intro paragraph preceding the first Markdown H1 so the file conforms to
+the llms.txt spec (the line is hardcoded in Rank Math and has no filter;
+we intercept the response body on <code>template_redirect</code>)</li>
+</ul>
+<h3 id="section-1">1.0.1</h3>
 <ul>
 <li><strong>Remove Rank Math frontend credit</strong> — applies
 <code>rank_math/frontend/remove_credit_notice</code> to strip the
 “Powered by Rank Math” HTML comment</li>
 <li><strong>Remove sitemap credit</strong> — applies
 <code>rank_math/sitemap/remove_credits</code> to remove the “Generator”
-line from the XML sitemap</li>
+line from the XML sitemap (see v1.0.2 — filter name was wrong)</li>
 <li><strong>Disable telemetry</strong> — applies
-<code>rank_math/usage_tracking</code> returning <code>false</code></li>
+<code>rank_math/usage_tracking</code> returning <code>false</code> (see
+v1.0.2 — filter does not exist)</li>
 <li><strong>Hide admin bar menu</strong> — removes the Rank Math node
 from the WordPress admin bar via <code>remove_node( 'rank-math' )</code>
 at priority 999</li>
 </ul>
-<h3 id="section-1">1.0.0</h3>
+<h3 id="section-2">1.0.0</h3>
 <ul>
 <li>Initial release</li>
 <li><code>rank_math/can_edit_file</code> filter returning
