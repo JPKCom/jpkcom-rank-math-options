@@ -3,7 +3,7 @@
 **Plugin Name:** JPKCom Rank Math Options  
 **Plugin URI:** https://github.com/JPKCom/jpkcom-rank-math-options  
 **Description:** Opinionated tweaks and options for the Rank Math SEO plugin.  
-**Version:** 1.0.1  
+**Version:** 1.0.2  
 **Author:** Jean Pierre Kolb <jpk@jpkc.com>  
 **Author URI:** https://www.jpkc.com/  
 **Contributors:** JPKCom  
@@ -13,7 +13,7 @@
 **Tested up to:** 7.0  
 **Requires PHP:** 8.3  
 **Network:** true  
-**Stable tag:** 1.0.1  
+**Stable tag:** 1.0.2  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 **Text Domain:** jpkcom-rank-math-options
@@ -33,7 +33,8 @@ By default, Rank Math hides the UI for editing `robots.txt` and `.htaccess` on m
 - **Unlocks robots.txt / .htaccess editing** in Rank Math SEO — including on multisite
 - **Removes the "Powered by Rank Math" HTML comment** from the frontend source
 - **Removes the "Generator" credit line** from Rank Math's XML sitemap
-- **Disables Rank Math's anonymous usage tracking / telemetry**
+- **Forces Rank Math's anonymous usage tracking / telemetry to off** at the option layer
+- **Cleans up the generated `llms.txt`** by stripping Rank Math's intro paragraph so the file starts with the site's H1 as the spec expects
 - **Hides the Rank Math admin bar menu** on the frontend and in the backend
 - **Network-ready** — can be network-activated and takes effect on every site
 - **Zero configuration** — no admin page, no settings to adjust
@@ -79,10 +80,15 @@ Yes. It uses a secure, self-hosted GitHub updater with SHA256 checksum verificat
 
 ## Changelog
 
+### 1.0.2
+- **Fix sitemap credit filter name** — v1.0.1 targeted the non-existent `rank_math/sitemap/remove_credits`; Rank Math actually fires the singular `rank_math/sitemap/remove_credit`
+- **Rework telemetry disable** — v1.0.1's `rank_math/usage_tracking` filter does not exist in Rank Math. Replaced with an `option_rank-math-options-general` filter that rewrites the `usage_tracking` key to `off` on read, which is the only reliable hook point since Rank Math's tracker class reads a plain option
+- **Clean up `llms.txt`** — strips Rank Math's intro paragraph preceding the first Markdown H1 so the file conforms to the llms.txt spec (the line is hardcoded in Rank Math and has no filter; we intercept the response body on `template_redirect`)
+
 ### 1.0.1
 - **Remove Rank Math frontend credit** — applies `rank_math/frontend/remove_credit_notice` to strip the "Powered by Rank Math" HTML comment
-- **Remove sitemap credit** — applies `rank_math/sitemap/remove_credits` to remove the "Generator" line from the XML sitemap
-- **Disable telemetry** — applies `rank_math/usage_tracking` returning `false`
+- **Remove sitemap credit** — applies `rank_math/sitemap/remove_credits` to remove the "Generator" line from the XML sitemap (see v1.0.2 — filter name was wrong)
+- **Disable telemetry** — applies `rank_math/usage_tracking` returning `false` (see v1.0.2 — filter does not exist)
 - **Hide admin bar menu** — removes the Rank Math node from the WordPress admin bar via `remove_node( 'rank-math' )` at priority 999
 
 ### 1.0.0

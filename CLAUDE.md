@@ -107,9 +107,10 @@ Triggered by `release: published` on GitHub. Pipeline:
 |------|------|-------|--------|
 | `rank_math/can_edit_file` | filter | `__return_true` | Re-enables the robots.txt / .htaccess editors in the Rank Math UI, including on multisite |
 | `rank_math/frontend/remove_credit_notice` | filter | `__return_true` | Removes the "Powered by Rank Math" HTML comment from the frontend source |
-| `rank_math/sitemap/remove_credits` | filter | `__return_true` | Removes the "Generator" credit line from Rank Math's sitemap XML |
-| `rank_math/usage_tracking` | filter | `__return_false` | Disables Rank Math's anonymous usage tracking / telemetry |
-| `admin_bar_menu` (priority 999) | action | `$wp_admin_bar->remove_node( 'rank-math' )` | Removes Rank Math's top-level node from the WordPress admin bar |
+| `rank_math/sitemap/remove_credit` | filter | `__return_true` | Removes the "Generator" credit line from Rank Math's sitemap XML (singular `remove_credit` — verified in `class-sitemap-xml.php`) |
+| `option_rank-math-options-general` | filter | rewrites `usage_tracking` → `'off'` | Forces Rank Math's telemetry off at the option layer. Rank Math's tracker class has no filter; the toggle is a plain option read via `Helper::get_settings()` |
+| `template_redirect` (priority 0) on `/llms.txt` | action | `ob_start()` + regex strip before first `# ` | Removes Rank Math's hardcoded intro paragraph so `llms.txt` starts with the site's H1 heading as the spec expects. The offending line is echoed directly in `class-llms-txt.php::output()` with no filter. |
+| `admin_bar_menu` (priority 999) | action | `$wp_admin_bar->remove_node( 'rank-math' )` | Removes Rank Math's top-level node from the WordPress admin bar. Node ID matches `Admin_Bar_Menu::MENU_IDENTIFIER`. |
 
 ---
 
