@@ -101,11 +101,15 @@ Triggered by `release: published` on GitHub. Pipeline:
 
 ---
 
-## Filters applied to Rank Math
+## Filters & actions applied to Rank Math
 
-| Filter | Value | Effect |
-|--------|-------|--------|
-| `rank_math/can_edit_file` | `__return_true` | Re-enables the robots.txt / .htaccess editors in the Rank Math UI, including on multisite |
+| Hook | Type | Value | Effect |
+|------|------|-------|--------|
+| `rank_math/can_edit_file` | filter | `__return_true` | Re-enables the robots.txt / .htaccess editors in the Rank Math UI, including on multisite |
+| `rank_math/frontend/remove_credit_notice` | filter | `__return_true` | Removes the "Powered by Rank Math" HTML comment from the frontend source |
+| `rank_math/sitemap/remove_credits` | filter | `__return_true` | Removes the "Generator" credit line from Rank Math's sitemap XML |
+| `rank_math/usage_tracking` | filter | `__return_false` | Disables Rank Math's anonymous usage tracking / telemetry |
+| `admin_bar_menu` (priority 999) | action | `$wp_admin_bar->remove_node( 'rank-math' )` | Removes Rank Math's top-level node from the WordPress admin bar |
 
 ---
 

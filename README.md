@@ -3,7 +3,7 @@
 **Plugin Name:** JPKCom Rank Math Options  
 **Plugin URI:** https://github.com/JPKCom/jpkcom-rank-math-options  
 **Description:** Opinionated tweaks and options for the Rank Math SEO plugin.  
-**Version:** 1.0.0  
+**Version:** 1.0.1  
 **Author:** Jean Pierre Kolb <jpk@jpkc.com>  
 **Author URI:** https://www.jpkc.com/  
 **Contributors:** JPKCom  
@@ -13,7 +13,7 @@
 **Tested up to:** 7.0  
 **Requires PHP:** 8.3  
 **Network:** true  
-**Stable tag:** 1.0.0  
+**Stable tag:** 1.0.1  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 **Text Domain:** jpkcom-rank-math-options
@@ -26,11 +26,15 @@ A small companion plugin that enables Rank Math SEO features that are disabled b
 
 **JPKCom Rank Math Options** is a lightweight helper plugin that applies opinionated defaults to [Rank Math SEO](https://wordpress.org/plugins/seo-by-rank-math/).
 
-By default, Rank Math hides the UI for editing `robots.txt` and `.htaccess` on multisite installations (and on setups where the constant `RANK_MATH_ADVANCED_MODE` is not set). This plugin re-enables those editors via the official `rank_math/can_edit_file` filter.
+By default, Rank Math hides the UI for editing `robots.txt` and `.htaccess` on multisite installations (and on setups where the constant `RANK_MATH_ADVANCED_MODE` is not set). This plugin re-enables those editors via the official `rank_math/can_edit_file` filter. It also trims a handful of Rank Math defaults that most site operators end up disabling manually anyway.
 
 ### Key Features
 
 - **Unlocks robots.txt / .htaccess editing** in Rank Math SEO — including on multisite
+- **Removes the "Powered by Rank Math" HTML comment** from the frontend source
+- **Removes the "Generator" credit line** from Rank Math's XML sitemap
+- **Disables Rank Math's anonymous usage tracking / telemetry**
+- **Hides the Rank Math admin bar menu** on the frontend and in the backend
 - **Network-ready** — can be network-activated and takes effect on every site
 - **Zero configuration** — no admin page, no settings to adjust
 - **Secure self-hosted updates** — GitHub-based updater with SHA256 checksum verification
@@ -74,6 +78,12 @@ Yes. It uses a secure, self-hosted GitHub updater with SHA256 checksum verificat
 ---
 
 ## Changelog
+
+### 1.0.1
+- **Remove Rank Math frontend credit** — applies `rank_math/frontend/remove_credit_notice` to strip the "Powered by Rank Math" HTML comment
+- **Remove sitemap credit** — applies `rank_math/sitemap/remove_credits` to remove the "Generator" line from the XML sitemap
+- **Disable telemetry** — applies `rank_math/usage_tracking` returning `false`
+- **Hide admin bar menu** — removes the Rank Math node from the WordPress admin bar via `remove_node( 'rank-math' )` at priority 999
 
 ### 1.0.0
 - Initial release

@@ -3,7 +3,7 @@
 Plugin Name: JPKCom Rank Math Options
 Plugin URI: https://github.com/JPKCom/jpkcom-rank-math-options
 Description: Opinionated tweaks and options for the Rank Math SEO plugin.
-Version: 1.0.0
+Version: 1.0.1
 Author: Jean Pierre Kolb <jpk@jpkc.com>
 Author URI: https://www.jpkc.com/
 Contributors: JPKCom
@@ -13,7 +13,7 @@ Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.3
 Network: true
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: jpkcom-rank-math-options
@@ -32,7 +32,7 @@ if ( ! defined( constant_name: 'WPINC' ) ) {
  * @since 1.0.0
  */
 if ( ! defined( 'JPKCOM_RANK_MATH_OPTIONS_VERSION' ) ) {
-    define( 'JPKCOM_RANK_MATH_OPTIONS_VERSION', '1.0.0' );
+    define( 'JPKCOM_RANK_MATH_OPTIONS_VERSION', '1.0.1' );
 }
 
 if ( ! defined( 'JPKCOM_RANK_MATH_OPTIONS_BASENAME' ) ) {
@@ -72,6 +72,45 @@ add_action( 'plugins_loaded', 'jpkcom_rank_math_options_textdomain' );
  * @param bool Can edit the robots & .htacess data.
  */
 add_filter( 'rank_math/can_edit_file', '__return_true' );
+
+
+/**
+ * Remove the "Powered by Rank Math" HTML comment from the frontend source.
+ *
+ * @since 1.0.1
+ */
+add_filter( 'rank_math/frontend/remove_credit_notice', '__return_true' );
+
+
+/**
+ * Remove the "Generator" credit line from Rank Math's sitemap XML output.
+ *
+ * @since 1.0.1
+ */
+add_filter( 'rank_math/sitemap/remove_credits', '__return_true' );
+
+
+/**
+ * Disable Rank Math's anonymous usage tracking / telemetry.
+ *
+ * @since 1.0.1
+ */
+add_filter( 'rank_math/usage_tracking', '__return_false' );
+
+
+/**
+ * Remove Rank Math's top-level menu from the WordPress admin bar.
+ *
+ * Rank Math registers its admin bar node with the ID "rank-math". Removing
+ * it via $wp_admin_bar->remove_node() after Rank Math has added it (priority
+ * 100) is more robust than trying to remove the action callback directly,
+ * since the callback is a method on a Rank Math singleton instance.
+ *
+ * @since 1.0.1
+ */
+add_action( 'admin_bar_menu', static function ( \WP_Admin_Bar $wp_admin_bar ): void {
+    $wp_admin_bar->remove_node( 'rank-math' );
+}, 999 );
 
 
 /**
