@@ -3,7 +3,7 @@
 **Plugin Name:** JPKCom Rank Math Options  
 **Plugin URI:** https://github.com/JPKCom/jpkcom-rank-math-options  
 **Description:** Opinionated tweaks and options for the Rank Math SEO plugin.  
-**Version:** 1.0.2  
+**Version:** 1.0.3  
 **Author:** Jean Pierre Kolb <jpk@jpkc.com>  
 **Author URI:** https://www.jpkc.com/  
 **Contributors:** JPKCom  
@@ -13,7 +13,7 @@
 **Tested up to:** 7.0  
 **Requires PHP:** 8.3  
 **Network:** true  
-**Stable tag:** 1.0.2  
+**Stable tag:** 1.0.3  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 **Text Domain:** jpkcom-rank-math-options
@@ -79,6 +79,13 @@ Yes. It uses a secure, self-hosted GitHub updater with SHA256 checksum verificat
 ---
 
 ## Changelog
+
+### 1.0.3
+* Security: updater prefers an exact match against the manifest `download_url` over the slug heuristic, so a tampered manifest can no longer bypass the checksum gate
+* Security: timing-safe checksum comparison (`hash_equals()`) with an `is_string()` guard against `hash_file()` failures
+* Security: manifest fetch via `wp_safe_remote_get()` (SSRF defense-in-depth)
+* Fixed PHP warning and missing contributor names in the plugin detail popup (`display_name` now provided)
+* Fixed PHP warning/deprecation on `wp plugin list` by completing the `no_update` transient entry (`new_version`, `package`, `tested`, `requires_php`)
 
 ### 1.0.2
 - **Fix sitemap credit filter name** — v1.0.1 targeted the non-existent `rank_math/sitemap/remove_credits`; Rank Math actually fires the singular `rank_math/sitemap/remove_credit`
