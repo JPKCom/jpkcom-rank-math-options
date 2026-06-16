@@ -3,7 +3,7 @@
 **Plugin Name:** JPKCom Rank Math Options  
 **Plugin URI:** https://github.com/JPKCom/jpkcom-rank-math-options  
 **Description:** Opinionated tweaks and options for the Rank Math SEO plugin.  
-**Version:** 1.0.3  
+**Version:** 1.0.4  
 **Author:** Jean Pierre Kolb <jpk@jpkc.com>  
 **Author URI:** https://www.jpkc.com/  
 **Contributors:** JPKCom  
@@ -13,7 +13,7 @@
 **Tested up to:** 7.0  
 **Requires PHP:** 8.3  
 **Network:** true  
-**Stable tag:** 1.0.3  
+**Stable tag:** 1.0.4  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 **Text Domain:** jpkcom-rank-math-options
@@ -79,6 +79,9 @@ Yes. It uses a secure, self-hosted GitHub updater with SHA256 checksum verificat
 ---
 
 ## Changelog
+
+### 1.0.4
+* Normalized license fallback defaults (updater and release workflow) to `GPL-2.0-or-later` with the HTTPS license URI
 
 ### 1.0.3
 * Security: updater prefers an exact match against the manifest `download_url` over the slug heuristic, so a tampered manifest can no longer bypass the checksum gate

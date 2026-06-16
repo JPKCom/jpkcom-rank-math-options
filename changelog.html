@@ -1,4 +1,9 @@
-<h3 id="section">1.0.3</h3>
+<h3 id="section">1.0.4</h3>
+<ul>
+<li>Normalized license fallback defaults (updater and release workflow)
+to <code>GPL-2.0-or-later</code> with the HTTPS license URI</li>
+</ul>
+<h3 id="section-1">1.0.3</h3>
 <ul>
 <li>Security: updater prefers an exact match against the manifest
 <code>download_url</code> over the slug heuristic, so a tampered
@@ -15,7 +20,7 @@ completing the <code>no_update</code> transient entry
 (<code>new_version</code>, <code>package</code>, <code>tested</code>,
 <code>requires_php</code>)</li>
 </ul>
-<h3 id="section-1">1.0.2</h3>
+<h3 id="section-2">1.0.2</h3>
 <ul>
 <li><strong>Fix sitemap credit filter name</strong> — v1.0.1 targeted
 the non-existent <code>rank_math/sitemap/remove_credits</code>; Rank
@@ -32,7 +37,7 @@ intro paragraph preceding the first Markdown H1 so the file conforms to
 the llms.txt spec (the line is hardcoded in Rank Math and has no filter;
 we intercept the response body on <code>template_redirect</code>)</li>
 </ul>
-<h3 id="section-2">1.0.1</h3>
+<h3 id="section-3">1.0.1</h3>
 <ul>
 <li><strong>Remove Rank Math frontend credit</strong> — applies
 <code>rank_math/frontend/remove_credit_notice</code> to strip the
@@ -47,7 +52,7 @@ v1.0.2 — filter does not exist)</li>
 from the WordPress admin bar via <code>remove_node( 'rank-math' )</code>
 at priority 999</li>
 </ul>
-<h3 id="section-3">1.0.0</h3>
+<h3 id="section-4">1.0.0</h3>
 <ul>
 <li>Initial release</li>
 <li><code>rank_math/can_edit_file</code> filter returning
