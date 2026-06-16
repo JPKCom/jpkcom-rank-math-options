@@ -4,7 +4,7 @@
 https://github.com/JPKCom/jpkcom-rank-math-options<br />
 <strong>Description:</strong> Opinionated tweaks and options for the
 Rank Math SEO plugin.<br />
-<strong>Version:</strong> 1.0.2<br />
+<strong>Version:</strong> 1.0.3<br />
 <strong>Author:</strong> Jean Pierre Kolb <a href="mailto:jpk@jpkc.com"
 class="email">jpk@jpkc.com</a><br />
 <strong>Author URI:</strong> https://www.jpkc.com/<br />
@@ -16,7 +16,7 @@ htaccess<br />
 <strong>Tested up to:</strong> 7.0<br />
 <strong>Requires PHP:</strong> 8.3<br />
 <strong>Network:</strong> true<br />
-<strong>Stable tag:</strong> 1.0.2<br />
+<strong>Stable tag:</strong> 1.0.3<br />
 <strong>License:</strong> GPL-2.0-or-later<br />
 <strong>License URI:</strong>
 https://www.gnu.org/licenses/gpl-2.0.html<br />
@@ -103,7 +103,24 @@ checksum verification. Updates appear in <strong>Plugins → Installed
 Plugins</strong> just like any plugin from wordpress.org.</p>
 <hr />
 <h2 id="changelog">Changelog</h2>
-<h3 id="section">1.0.2</h3>
+<h3 id="section">1.0.3</h3>
+<ul>
+<li>Security: updater prefers an exact match against the manifest
+<code>download_url</code> over the slug heuristic, so a tampered
+manifest can no longer bypass the checksum gate</li>
+<li>Security: timing-safe checksum comparison
+(<code>hash_equals()</code>) with an <code>is_string()</code> guard
+against <code>hash_file()</code> failures</li>
+<li>Security: manifest fetch via <code>wp_safe_remote_get()</code> (SSRF
+defense-in-depth)</li>
+<li>Fixed PHP warning and missing contributor names in the plugin detail
+popup (<code>display_name</code> now provided)</li>
+<li>Fixed PHP warning/deprecation on <code>wp plugin list</code> by
+completing the <code>no_update</code> transient entry
+(<code>new_version</code>, <code>package</code>, <code>tested</code>,
+<code>requires_php</code>)</li>
+</ul>
+<h3 id="section-1">1.0.2</h3>
 <ul>
 <li><strong>Fix sitemap credit filter name</strong> — v1.0.1 targeted
 the non-existent <code>rank_math/sitemap/remove_credits</code>; Rank
@@ -120,7 +137,7 @@ intro paragraph preceding the first Markdown H1 so the file conforms to
 the llms.txt spec (the line is hardcoded in Rank Math and has no filter;
 we intercept the response body on <code>template_redirect</code>)</li>
 </ul>
-<h3 id="section-1">1.0.1</h3>
+<h3 id="section-2">1.0.1</h3>
 <ul>
 <li><strong>Remove Rank Math frontend credit</strong> — applies
 <code>rank_math/frontend/remove_credit_notice</code> to strip the
@@ -135,7 +152,7 @@ v1.0.2 — filter does not exist)</li>
 from the WordPress admin bar via <code>remove_node( 'rank-math' )</code>
 at priority 999</li>
 </ul>
-<h3 id="section-2">1.0.0</h3>
+<h3 id="section-3">1.0.0</h3>
 <ul>
 <li>Initial release</li>
 <li><code>rank_math/can_edit_file</code> filter returning
