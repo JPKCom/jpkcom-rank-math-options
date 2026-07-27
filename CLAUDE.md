@@ -15,7 +15,7 @@ Currently applies a single filter: `rank_math/can_edit_file` → `__return_true`
 
 ## Architecture
 
-Intentionally minimal. The plugin is a thin wrapper around a single Rank Math filter plus the shared JPKCom GitHub updater class.
+Intentionally minimal. The plugin is a thin wrapper around a single Rank Math filter plus the shared JPKCom GitHub updater class (downstream copy of upstream `jpkcom-post-filter`; do not edit per-plugin). SHA256 checksum verification is **mandatory** — a missing or unfetchable `checksum_sha256` aborts the update — and the verified temp file is returned from `upgrader_pre_download`, so WordPress installs exactly the bytes that were hashed.
 
 ```
 Main file (jpkcom-rank-math-options.php)
@@ -31,7 +31,7 @@ Main file (jpkcom-rank-math-options.php)
 
 | Constant | Default | Purpose |
 |----------|---------|---------|
-| `JPKCOM_RANK_MATH_OPTIONS_VERSION` | `'1.0.0'` | Plugin version |
+| `JPKCOM_RANK_MATH_OPTIONS_VERSION` | `'1.0.5'` | Plugin version |
 | `JPKCOM_RANK_MATH_OPTIONS_BASENAME` | `plugin_basename(__FILE__)` | Plugin basename |
 | `JPKCOM_RANK_MATH_OPTIONS_PLUGIN_PATH` | `plugin_dir_path(__FILE__)` | Absolute path |
 | `JPKCOM_RANK_MATH_OPTIONS_PLUGIN_URL` | `plugin_dir_url(__FILE__)` | URL |
@@ -71,7 +71,9 @@ jpkcom-rank-math-options/
 - Race-condition lock on manifest fetch (`*_lock` transient, 30 s)
 - 24-hour transient cache of decoded manifest
 - Comprehensive error logging when `WP_DEBUG` is on
-- Graceful backward compatibility: missing checksum → download allowed with a debug log entry
+- **Fail closed:** a missing `checksum_sha256`, or a manifest that cannot be fetched, aborts the update with a `WP_Error`. There is deliberately no "skip verification" fallback — that would let anyone able to alter the manifest disable the integrity check by dropping one field
+- The verified temp file is returned from `upgrader_pre_download`, so WordPress installs exactly the bytes that were hashed (no second download)
+- Failed manifest fetches are negatively cached for 1 h
 
 ### Hooks registered
 | Hook | Purpose |
@@ -84,6 +86,20 @@ jpkcom-rank-math-options/
 ---
 
 ## Release Workflow
+
+**Supply-chain: GitHub Actions sind auf Commit-SHAs gepinnt.** Alle `uses:`-Zeilen in `.github/workflows/` referenzieren einen 40-stelligen Commit-SHA statt eines Tags (`@v4`), mit der Version als Kommentar dahinter. Grund: ein Tag ist ein beweglicher Zeiger und lässt sich umhängen, ein SHA nicht. Da dieser Workflow die Plugin-ZIP **und** die SHA256-Summe erzeugt, der der Auto-Updater vertraut, würde eine kompromittierte Action ein manipuliertes ZIP samt passender Prüfsumme ausliefern — die Prüfsumme sichert den Transportweg, das Pinning den Build. `.github/dependabot.yml` hält die Pins wöchentlich aktuell (ein gesammelter PR). Beim Aktualisieren immer SHA *und* Versionskommentar zusammen ändern.
+
+**CI & Dependabot-Auto-Merge.** Zwei zusätzliche Workflows:
+
+- `.github/workflows/ci.yml` — läuft auf jedem `pull_request`. Prüft: `php -l` über alle PHP-Dateien; ungültige benannte Argumente an internen PHP-Funktionen (fängt die Klasse `sprintf(format:, values:)` → `ArgumentCountError`, die `php -l` nicht sieht); YAML-Validität aller `.github`-Dateien; und dass jede Action auf einem 40-stelligen Commit-SHA gepinnt ist (beide YAML-Formen, `uses:` und `- uses:`).
+- `.github/workflows/dependabot-auto-merge.yml` — merged Dependabot-PRs automatisch, aber nur `semver-patch` und `semver-minor`. Major-Updates bekommen stattdessen einen Kommentar und bleiben manuell. Greift nur bei PRs von `dependabot[bot]` aus diesem Repo, nie aus Forks.
+
+> **Zwei Repo-Einstellungen sind Voraussetzung, sonst ist der Auto-Merge wirkungslos oder gefährlich:**
+> 1. **„Allow auto-merge"** muss in den Repo-Settings aktiv sein.
+> 2. Der Branch-Schutz muss den CI-Job als **Required status check** führen (`CI / Lint & Guards`). Fehlt das, merged `gh pr merge --auto` **sofort** — es gibt dann nichts, worauf es warten müsste, und die CI wäre reine Dekoration.
+
+Zusammen mit `cooldown: default-days: 7` in der `dependabot.yml` heißt das: kein Action-Release wird in seiner ersten Woche übernommen, patch/minor laufen danach automatisch durch (sofern CI grün), major bleibt eine bewusste Entscheidung.
+
 
 Triggered by `release: published` on GitHub. Pipeline:
 
