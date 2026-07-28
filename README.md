@@ -3,7 +3,7 @@
 **Plugin Name:** JPKCom Rank Math Options  
 **Plugin URI:** https://github.com/JPKCom/jpkcom-rank-math-options  
 **Description:** Opinionated tweaks and options for the Rank Math SEO plugin.  
-**Version:** 1.0.5  
+**Version:** 1.0.6  
 **Author:** Jean Pierre Kolb <jpk@jpkc.com>  
 **Author URI:** https://www.jpkc.com/  
 **Contributors:** JPKCom  
@@ -13,7 +13,7 @@
 **Tested up to:** 7.0  
 **Requires PHP:** 8.3  
 **Network:** true  
-**Stable tag:** 1.0.5  
+**Stable tag:** 1.0.6  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 **Text Domain:** jpkcom-rank-math-options
@@ -79,6 +79,12 @@ Yes. It uses a secure, self-hosted GitHub updater with SHA256 checksum verificat
 ---
 
 ## Changelog
+
+### 1.0.6
+* CI: the release step no longer copies the staging directory into itself, so the ZIP has no empty `jpkcom-rank-math-options/jpkcom-rank-math-options/` folder
+* CI: bumped the pinned GitHub Actions (checkout v7.0.1, setup-python v7.0.0, action-gh-release v3.0.2, fetch-metadata v3.1.0), still pinned to full commit SHAs
+* CI: the release ZIP now excludes the development-only `tests/` and `tools/` directories
+* CI: security and regression tests now run on every pull request, where a plugin has them
 
 ### 1.0.5
 * Security: update packages are now verified *before* installation — the verified file is handed to WordPress instead of being downloaded a second time, so the bytes that were checked are the bytes that get installed
