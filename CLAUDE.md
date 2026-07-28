@@ -31,7 +31,7 @@ Main file (jpkcom-rank-math-options.php)
 
 | Constant | Default | Purpose |
 |----------|---------|---------|
-| `JPKCOM_RANK_MATH_OPTIONS_VERSION` | `'1.0.5'` | Plugin version |
+| `JPKCOM_RANK_MATH_OPTIONS_VERSION` | `'1.0.6'` | Plugin version |
 | `JPKCOM_RANK_MATH_OPTIONS_BASENAME` | `plugin_basename(__FILE__)` | Plugin basename |
 | `JPKCOM_RANK_MATH_OPTIONS_PLUGIN_PATH` | `plugin_dir_path(__FILE__)` | Absolute path |
 | `JPKCOM_RANK_MATH_OPTIONS_PLUGIN_URL` | `plugin_dir_url(__FILE__)` | URL |
