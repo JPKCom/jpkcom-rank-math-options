@@ -3,17 +3,17 @@
 Plugin Name: JPKCom Rank Math Options
 Plugin URI: https://github.com/JPKCom/jpkcom-rank-math-options
 Description: Opinionated tweaks and options for the Rank Math SEO plugin.
-Version: 1.0.7
+Version: 1.0.8
 Author: Jean Pierre Kolb <jpk@jpkc.com>
 Author URI: https://www.jpkc.com/
 Contributors: JPKCom
 Tags: SEO, settings, rank math, robots.txt, htaccess
 Requires Plugins: seo-by-rank-math
 Requires at least: 6.9
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.3
 Network: true
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: jpkcom-rank-math-options
@@ -32,7 +32,7 @@ if ( ! defined( constant_name: 'WPINC' ) ) {
  * @since 1.0.0
  */
 if ( ! defined( 'JPKCOM_RANK_MATH_OPTIONS_VERSION' ) ) {
-    define( 'JPKCOM_RANK_MATH_OPTIONS_VERSION', '1.0.7' );
+    define( 'JPKCOM_RANK_MATH_OPTIONS_VERSION', '1.0.8' );
 }
 
 if ( ! defined( 'JPKCOM_RANK_MATH_OPTIONS_BASENAME' ) ) {
