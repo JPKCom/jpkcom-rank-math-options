@@ -2,26 +2,31 @@
 plugin that applies opinionated defaults to <a
 href="https://wordpress.org/plugins/seo-by-rank-math/">Rank Math
 SEO</a>.</p>
-<p>By default, Rank Math hides the UI for editing
-<code>robots.txt</code> and <code>.htaccess</code> on multisite
-installations (and on setups where the constant
-<code>RANK_MATH_ADVANCED_MODE</code> is not set). This plugin re-enables
-those editors via the official <code>rank_math/can_edit_file</code>
-filter. It also trims a handful of Rank Math defaults that most site
-operators end up disabling manually anyway.</p>
+<p>Rank Math disables its <code>robots.txt</code> and
+<code>.htaccess</code> editors whenever the WordPress constant
+<code>DISALLOW_FILE_EDIT</code> or <code>DISALLOW_FILE_MODS</code> is
+set. This plugin re-enables them through the official
+<code>rank_math/can_edit_file</code> filter, and trims a handful of Rank
+Math defaults that most site operators end up switching off by hand
+anyway.</p>
+<p><strong>Please note:</strong> because that is the only condition Rank
+Math checks, re-enabling the editors means overriding those constants
+where they are set. On Apache, <code>.htaccess</code> is effectively
+server configuration — activate this plugin only where that is
+intended.</p>
 <h3 id="key-features">Key Features</h3>
 <ul>
 <li><strong>Unlocks robots.txt / .htaccess editing</strong> in Rank Math
-SEO — including on multisite</li>
-<li><strong>Removes the “Powered by Rank Math” HTML comment</strong>
-from the frontend source</li>
-<li><strong>Removes the “Generator” credit line</strong> from Rank
-Math’s XML sitemap</li>
+SEO, including where <code>DISALLOW_FILE_EDIT</code> is set</li>
+<li><strong>Removes the “Search Engine Optimization by Rank Math” HTML
+comment</strong> from the frontend source</li>
+<li><strong>Removes the generator credit</strong> from Rank Math’s XML
+sitemap and its stylesheet</li>
 <li><strong>Forces Rank Math’s anonymous usage tracking / telemetry to
-off</strong> at the option layer</li>
-<li><strong>Cleans up the generated <code>llms.txt</code></strong> by
-stripping Rank Math’s intro paragraph so the file starts with the site’s
-H1 as the spec expects</li>
+off</strong>, and prevents an opt-in from being stored, so removing this
+plugin cannot leave tracking switched on behind it</li>
+<li><strong>Cleans up the generated <code>llms.txt</code></strong> so
+the file opens with the site’s H1 as the format expects</li>
 <li><strong>Hides the Rank Math admin bar menu</strong> on the frontend
 and in the backend</li>
 <li><strong>Network-ready</strong> — can be network-activated and takes
@@ -32,4 +37,5 @@ adjust</li>
 with SHA256 checksum verification</li>
 <li><strong>No dependencies</strong> beyond Rank Math SEO itself</li>
 </ul>
+<p>Verified against <strong>Rank Math 1.0.275</strong>.</p>
 <hr />

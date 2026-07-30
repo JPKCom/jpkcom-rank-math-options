@@ -98,7 +98,7 @@
 https://github.com/JPKCom/jpkcom-rank-math-options<br />
 <strong>Description:</strong> Opinionated tweaks and options for the
 Rank Math SEO plugin.<br />
-<strong>Version:</strong> 1.0.9<br />
+<strong>Version:</strong> 1.0.10<br />
 <strong>Author:</strong> Jean Pierre Kolb <a href="mailto:jpk@jpkc.com"
 class="email">jpk@jpkc.com</a><br />
 <strong>Author URI:</strong> https://www.jpkc.com/<br />
@@ -110,7 +110,7 @@ htaccess<br />
 <strong>Tested up to:</strong> 7.1<br />
 <strong>Requires PHP:</strong> 8.3<br />
 <strong>Network:</strong> true<br />
-<strong>Stable tag:</strong> 1.0.9<br />
+<strong>Stable tag:</strong> 1.0.10<br />
 <strong>License:</strong> GPL-2.0-or-later<br />
 <strong>License URI:</strong>
 https://www.gnu.org/licenses/gpl-2.0.html<br />
@@ -123,26 +123,31 @@ disabled by default on certain WordPress installations.</p>
 plugin that applies opinionated defaults to <a
 href="https://wordpress.org/plugins/seo-by-rank-math/">Rank Math
 SEO</a>.</p>
-<p>By default, Rank Math hides the UI for editing
-<code>robots.txt</code> and <code>.htaccess</code> on multisite
-installations (and on setups where the constant
-<code>RANK_MATH_ADVANCED_MODE</code> is not set). This plugin re-enables
-those editors via the official <code>rank_math/can_edit_file</code>
-filter. It also trims a handful of Rank Math defaults that most site
-operators end up disabling manually anyway.</p>
+<p>Rank Math disables its <code>robots.txt</code> and
+<code>.htaccess</code> editors whenever the WordPress constant
+<code>DISALLOW_FILE_EDIT</code> or <code>DISALLOW_FILE_MODS</code> is
+set. This plugin re-enables them through the official
+<code>rank_math/can_edit_file</code> filter, and trims a handful of Rank
+Math defaults that most site operators end up switching off by hand
+anyway.</p>
+<p><strong>Please note:</strong> because that is the only condition Rank
+Math checks, re-enabling the editors means overriding those constants
+where they are set. On Apache, <code>.htaccess</code> is effectively
+server configuration — activate this plugin only where that is
+intended.</p>
 <h3 id="key-features">Key Features</h3>
 <ul>
 <li><strong>Unlocks robots.txt / .htaccess editing</strong> in Rank Math
-SEO — including on multisite</li>
-<li><strong>Removes the “Powered by Rank Math” HTML comment</strong>
-from the frontend source</li>
-<li><strong>Removes the “Generator” credit line</strong> from Rank
-Math’s XML sitemap</li>
+SEO, including where <code>DISALLOW_FILE_EDIT</code> is set</li>
+<li><strong>Removes the “Search Engine Optimization by Rank Math” HTML
+comment</strong> from the frontend source</li>
+<li><strong>Removes the generator credit</strong> from Rank Math’s XML
+sitemap and its stylesheet</li>
 <li><strong>Forces Rank Math’s anonymous usage tracking / telemetry to
-off</strong> at the option layer</li>
-<li><strong>Cleans up the generated <code>llms.txt</code></strong> by
-stripping Rank Math’s intro paragraph so the file starts with the site’s
-H1 as the spec expects</li>
+off</strong>, and prevents an opt-in from being stored, so removing this
+plugin cannot leave tracking switched on behind it</li>
+<li><strong>Cleans up the generated <code>llms.txt</code></strong> so
+the file opens with the site’s H1 as the format expects</li>
 <li><strong>Hides the Rank Math admin bar menu</strong> on the frontend
 and in the backend</li>
 <li><strong>Network-ready</strong> — can be network-activated and takes
@@ -153,6 +158,7 @@ adjust</li>
 with SHA256 checksum verification</li>
 <li><strong>No dependencies</strong> beyond Rank Math SEO itself</li>
 </ul>
+<p>Verified against <strong>Rank Math 1.0.275</strong>.</p>
 <hr />
 <h2 id="installation">Installation</h2>
 <ol type="1">
@@ -175,13 +181,23 @@ the plugin, you can unhook the filter from another plugin or your
 class="sourceCode php"><code class="sourceCode php"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remove_filter( <span class="st">&#39;rank_math/can_edit_file&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span></code></pre></div>
 <hr />
 <h2 id="faq">FAQ</h2>
-<h3
-id="why-cant-i-edit-robots.txt-.htaccess-in-rank-math-on-multisite">Why
-can’t I edit robots.txt / .htaccess in Rank Math on multisite?</h3>
-<p>Rank Math disables these editors on multisite by default for safety.
-This plugin opts your installation back in by returning
-<code>true</code> on the <code>rank_math/can_edit_file</code>
-filter.</p>
+<h3 id="why-cant-i-edit-robots.txt-.htaccess-in-rank-math">Why can’t I
+edit robots.txt / .htaccess in Rank Math?</h3>
+<p>Rank Math checks a single condition: whether
+<code>DISALLOW_FILE_EDIT</code> or <code>DISALLOW_FILE_MODS</code> is
+defined and true in your <code>wp-config.php</code>. If neither is set,
+the editors are already available and this plugin changes nothing there.
+If one of them is set, this plugin overrides it by returning
+<code>true</code> on the <code>rank_math/can_edit_file</code> filter.
+Multisite makes no difference of its own.</p>
+<h3 id="does-the-plugin-turn-telemetry-off-for-good">Does the plugin
+turn telemetry off for good?</h3>
+<p>Yes. Rank Math’s switch is the <code>rank_math_mixpanel_optin</code>
+option, and this plugin filters every read of it to <code>false</code> —
+so <code>Optin::can_track()</code> reports off no matter what is stored.
+It also blocks writes to that option, which means an opt-in never
+reaches the database. Deactivating this plugin therefore leaves tracking
+off, rather than switching it on.</p>
 <h3 id="does-this-plugin-require-rank-math-seo">Does this plugin require
 Rank Math SEO?</h3>
 <p>Yes. The plugin header declares
@@ -189,15 +205,59 @@ Rank Math SEO?</h3>
 prevent activation until Rank Math SEO is installed and active.</p>
 <h3 id="does-this-plugin-store-any-data-or-add-admin-pages">Does this
 plugin store any data or add admin pages?</h3>
-<p>No. It only hooks into a single Rank Math filter and has no UI, no
-options, and no database writes.</p>
+<p>No. It registers a handful of filters and one action, and has no UI,
+no options and no database writes of its own.</p>
 <h3 id="does-this-plugin-auto-update">Does this plugin auto-update?</h3>
 <p>Yes. It uses a secure, self-hosted GitHub updater with SHA256
 checksum verification. Updates appear in <strong>Plugins → Installed
 Plugins</strong> just like any plugin from wordpress.org.</p>
 <hr />
 <h2 id="changelog">Changelog</h2>
-<h3 id="section">1.0.9</h3>
+<h3 id="section">1.0.10</h3>
+<ul>
+<li>Fixed: Rank Math’s usage tracking was not actually being switched
+off. The plugin rewrote a <code>usage_tracking</code> key in
+<code>rank-math-options-general</code>, but that settings field is
+declared <code>'save_field' =&gt; false</code>, is never stored in that
+option, and nothing reads the tracking state from it. The real switch is
+the standalone <code>rank_math_mixpanel_optin</code> option, which
+<code>Optin::can_track()</code> and <code>Optin::is_enabled()</code>
+consult. Measured against Rank Math 1.0.275: with tracking opted in,
+<code>can_track()</code> returned <strong>true</strong> despite this
+plugin being active; it now returns false</li>
+<li>Added: the stored opt-in value can no longer become true either
+(<code>pre_update_option_rank_math_mixpanel_optin</code>). Without that,
+an opt-in would leave <code>true</code> in the database and deactivating
+or removing this plugin later would silently switch tracking on</li>
+<li>Fixed: the llms.txt intro paragraph is now removed through
+<code>rank_math/llms_txt/remove_credit</code>, the filter Rank Math has
+since added around exactly those two output lines. The previous
+implementation buffered the response on <code>template_redirect</code>
+and compared the request path against the literal
+<code>/llms.txt</code>, so it never ran on an installation in a
+subdirectory, where the path is <code>/subdir/llms.txt</code> —
+precisely the case it was written for. Output is byte-identical; roughly
+20 lines of output buffering and regex are gone</li>
+<li>Removed: the <code>option_rank-math-options-general</code> filter,
+which no longer served a purpose once telemetry moved to the option Rank
+Math actually consults</li>
+<li>Added: <code>tests/test-hooks.php</code> covers the hook surface and
+every callback; CI runs it on every pull request and push to
+<code>main</code></li>
+<li>Docs: <code>CLAUDE.md</code> described one filter where there are
+six, explained <code>rank_math/can_edit_file</code> with multisite
+instead of the
+<code>DISALLOW_FILE_EDIT</code>/<code>DISALLOW_FILE_MODS</code>
+constants it actually overrides, claimed releases are triggered by
+<code>release: published</code> rather than a tag push, and said the
+version lives in three places while listing five</li>
+<li>Note: no behaviour change to <code>rank_math/can_edit_file</code>.
+Its only effect is to override an explicit
+<code>DISALLOW_FILE_EDIT</code> or <code>DISALLOW_FILE_MODS</code>; with
+neither constant defined Rank Math already allows the editors. See
+<code>CLAUDE.md</code> for the trade-off</li>
+</ul>
+<h3 id="section-1">1.0.9</h3>
 <ul>
 <li>Changed: the update manifest generator now defaults a missing
 <code>Network:</code> header to false instead of true, matching
@@ -211,7 +271,7 @@ repository are now English throughout, and the developer notes in
 <code>CLAUDE.md</code> were translated and trimmed. No effect on the
 shipped plugin</li>
 </ul>
-<h3 id="section-1">1.0.8</h3>
+<h3 id="section-2">1.0.8</h3>
 <ul>
 <li>Changed: <code>Tested up to</code> raised to WordPress 7.1</li>
 <li>Changed: the bundled updater’s runtime floor now matches the
@@ -223,7 +283,7 @@ and <code>tested</code> now say 6.9 and 7.1. They only apply when the
 README metadata cannot be read, but a stale fallback would have
 published a minimum the plugin no longer supports</li>
 </ul>
-<h3 id="section-2">1.0.7</h3>
+<h3 id="section-3">1.0.7</h3>
 <ul>
 <li>Added: plugin banners (<code>assets/banner-1544x500.avif</code>,
 <code>assets/banner-772x250.avif</code>) — a plain <code>#3c4955</code>
@@ -231,7 +291,7 @@ surface with no lettering. The update manifest already advertised these
 two URLs, but nothing was published under them, so the plugin card in
 wp-admin had a broken banner</li>
 </ul>
-<h3 id="section-3">1.0.6</h3>
+<h3 id="section-4">1.0.6</h3>
 <ul>
 <li>CI: the release step no longer copies the staging directory into
 itself, so the ZIP has no empty
@@ -245,7 +305,7 @@ to full commit SHAs</li>
 <li>CI: security and regression tests now run on every pull request,
 where a plugin has them</li>
 </ul>
-<h3 id="section-4">1.0.5</h3>
+<h3 id="section-5">1.0.5</h3>
 <ul>
 <li>Security: update packages are now verified <em>before</em>
 installation — the verified file is handed to WordPress instead of being
@@ -270,12 +330,12 @@ instead of being retried on every admin request</li>
 <li>Added: CI workflow on every pull request (PHP lint, named-argument
 check, YAML validation, action-pinning guard)</li>
 </ul>
-<h3 id="section-5">1.0.4</h3>
+<h3 id="section-6">1.0.4</h3>
 <ul>
 <li>Normalized license fallback defaults (updater and release workflow)
 to <code>GPL-2.0-or-later</code> with the HTTPS license URI</li>
 </ul>
-<h3 id="section-6">1.0.3</h3>
+<h3 id="section-7">1.0.3</h3>
 <ul>
 <li>Security: updater prefers an exact match against the manifest
 <code>download_url</code> over the slug heuristic, so a tampered
@@ -292,7 +352,7 @@ completing the <code>no_update</code> transient entry
 (<code>new_version</code>, <code>package</code>, <code>tested</code>,
 <code>requires_php</code>)</li>
 </ul>
-<h3 id="section-7">1.0.2</h3>
+<h3 id="section-8">1.0.2</h3>
 <ul>
 <li><strong>Fix sitemap credit filter name</strong> — v1.0.1 targeted
 the non-existent <code>rank_math/sitemap/remove_credits</code>; Rank
@@ -309,7 +369,7 @@ intro paragraph preceding the first Markdown H1 so the file conforms to
 the llms.txt spec (the line is hardcoded in Rank Math and has no filter;
 we intercept the response body on <code>template_redirect</code>)</li>
 </ul>
-<h3 id="section-8">1.0.1</h3>
+<h3 id="section-9">1.0.1</h3>
 <ul>
 <li><strong>Remove Rank Math frontend credit</strong> — applies
 <code>rank_math/frontend/remove_credit_notice</code> to strip the
@@ -324,7 +384,7 @@ v1.0.2 — filter does not exist)</li>
 from the WordPress admin bar via <code>remove_node( 'rank-math' )</code>
 at priority 999</li>
 </ul>
-<h3 id="section-9">1.0.0</h3>
+<h3 id="section-10">1.0.0</h3>
 <ul>
 <li>Initial release</li>
 <li><code>rank_math/can_edit_file</code> filter returning
@@ -354,7 +414,7 @@ reference.</p>
 <tbody>
 <tr class="odd">
 <td><code>JPKCOM_RANK_MATH_OPTIONS_VERSION</code></td>
-<td><code>'1.0.0'</code></td>
+<td>matches the header <code>Version:</code></td>
 <td>Plugin version</td>
 </tr>
 <tr class="even">
@@ -374,8 +434,17 @@ reference.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="filters-applied">Filters applied</h3>
+<h3 id="hooks-applied">Hooks applied</h3>
 <div class="sourceCode" id="cb2"><pre
-class="sourceCode php"><code class="sourceCode php"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;rank_math/can_edit_file&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span></code></pre></div>
+class="sourceCode php"><code class="sourceCode php"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;rank_math/can_edit_file&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;rank_math/frontend/remove_credit_notice&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;rank_math/sitemap/remove_credit&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;rank_math/llms_txt/remove_credit&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_true&#39;</span> )<span class="ot">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;option_rank_math_mixpanel_optin&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_false&#39;</span><span class="ot">,</span> <span class="cn">PHP_INT_MAX</span> )<span class="ot">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;default_option_rank_math_mixpanel_optin&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_false&#39;</span><span class="ot">,</span> <span class="cn">PHP_INT_MAX</span> )<span class="ot">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>add_filter( <span class="st">&#39;pre_update_option_rank_math_mixpanel_optin&#39;</span><span class="ot">,</span> <span class="st">&#39;__return_false&#39;</span><span class="ot">,</span> <span class="cn">PHP_INT_MAX</span> )<span class="ot">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>add_action( <span class="st">&#39;admin_bar_menu&#39;</span><span class="ot">,</span> <span class="co">/* remove_node( &#39;rank-math&#39; ) */</span><span class="ot">,</span> <span class="dv">999</span> )<span class="ot">;</span></span></code></pre></div>
 </body>
 </html>

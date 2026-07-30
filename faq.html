@@ -1,10 +1,20 @@
-<h3
-id="why-cant-i-edit-robots.txt-.htaccess-in-rank-math-on-multisite">Why
-can’t I edit robots.txt / .htaccess in Rank Math on multisite?</h3>
-<p>Rank Math disables these editors on multisite by default for safety.
-This plugin opts your installation back in by returning
-<code>true</code> on the <code>rank_math/can_edit_file</code>
-filter.</p>
+<h3 id="why-cant-i-edit-robots.txt-.htaccess-in-rank-math">Why can’t I
+edit robots.txt / .htaccess in Rank Math?</h3>
+<p>Rank Math checks a single condition: whether
+<code>DISALLOW_FILE_EDIT</code> or <code>DISALLOW_FILE_MODS</code> is
+defined and true in your <code>wp-config.php</code>. If neither is set,
+the editors are already available and this plugin changes nothing there.
+If one of them is set, this plugin overrides it by returning
+<code>true</code> on the <code>rank_math/can_edit_file</code> filter.
+Multisite makes no difference of its own.</p>
+<h3 id="does-the-plugin-turn-telemetry-off-for-good">Does the plugin
+turn telemetry off for good?</h3>
+<p>Yes. Rank Math’s switch is the <code>rank_math_mixpanel_optin</code>
+option, and this plugin filters every read of it to <code>false</code> —
+so <code>Optin::can_track()</code> reports off no matter what is stored.
+It also blocks writes to that option, which means an opt-in never
+reaches the database. Deactivating this plugin therefore leaves tracking
+off, rather than switching it on.</p>
 <h3 id="does-this-plugin-require-rank-math-seo">Does this plugin require
 Rank Math SEO?</h3>
 <p>Yes. The plugin header declares
@@ -12,8 +22,8 @@ Rank Math SEO?</h3>
 prevent activation until Rank Math SEO is installed and active.</p>
 <h3 id="does-this-plugin-store-any-data-or-add-admin-pages">Does this
 plugin store any data or add admin pages?</h3>
-<p>No. It only hooks into a single Rank Math filter and has no UI, no
-options, and no database writes.</p>
+<p>No. It registers a handful of filters and one action, and has no UI,
+no options and no database writes of its own.</p>
 <h3 id="does-this-plugin-auto-update">Does this plugin auto-update?</h3>
 <p>Yes. It uses a secure, self-hosted GitHub updater with SHA256
 checksum verification. Updates appear in <strong>Plugins → Installed

@@ -138,7 +138,7 @@
             <dt class="phpdocumentor-table-of-contents__entry -constant -public">
     <a class="" href="namespaces/default.html#constant_JPKCOM_RANK_MATH_OPTIONS_VERSION">JPKCOM_RANK_MATH_OPTIONS_VERSION</a>
     <span>
-        &nbsp;: mixed&nbsp;= &#039;1.0.9&#039;                            </span>
+        &nbsp;: mixed&nbsp;= &#039;1.0.10&#039;                            </span>
 </dt>
 
     </dl>
@@ -278,7 +278,7 @@
     <span class="phpdocumentor-signature__visibility">public</span>
         <span class="phpdocumentor-signature__type">mixed</span>
     <span class="phpdocumentor-signature__name">JPKCOM_RANK_MATH_OPTIONS_VERSION</span>
-    = <span class="phpdocumentor-signature__default-value">&#039;1.0.9&#039;</span>
+    = <span class="phpdocumentor-signature__default-value">&#039;1.0.10&#039;</span>
 </code>
 
 
@@ -305,7 +305,7 @@
     <aside class="phpdocumentor-element-found-in">
     <abbr class="phpdocumentor-element-found-in__file" title="jpkcom-rank-math-options.php"><a href="files/jpkcom-rank-math-options.html">jpkcom-rank-math-options.php</a></abbr>
     :
-    <span class="phpdocumentor-element-found-in__line">58</span>
+    <span class="phpdocumentor-element-found-in__line">61</span>
 
     </aside>
 
@@ -316,7 +316,10 @@
     <span class="phpdocumentor-signature__visibility"></span>
                     <span class="phpdocumentor-signature__name">jpkcom_rank_math_options_textdomain</span><span>(</span><span>)</span><span> : </span><span class="phpdocumentor-signature__response_type">void</span></code>
 
-        <section class="phpdocumentor-description"><p>Loads translation files from the /languages directory.</p>
+        <section class="phpdocumentor-description"><p>Loads translation files from the /languages directory. Kept even though the
+plugin currently ships no translatable strings: WordPress does not register a
+plugin's own languages directory from the <code class="prettyprint">Domain Path</code> header on its own, so
+this call is what a bundled translation would need.</p>
 </section>
 
     
