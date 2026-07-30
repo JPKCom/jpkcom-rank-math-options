@@ -2,28 +2,40 @@
 
 ## Plugin Overview
 
-Small companion plugin that applies opinionated tweaks to [Rank Math SEO](https://wordpress.org/plugins/seo-by-rank-math/).
+Small companion plugin that applies opinionated tweaks to [Rank Math SEO](https://wordpress.org/plugins/seo-by-rank-math/): it re-enables the robots.txt / .htaccess editors, strips Rank Math's credit lines from the front end, the sitemap and `llms.txt`, forces the anonymous usage tracking off, and removes the SEO node from the admin bar.
 
-Currently applies a single filter: `rank_math/can_edit_file` → `__return_true`, which re-enables the robots.txt / .htaccess editors that Rank Math hides by default on multisite and restricted installations.
-
-- **Text Domain:** `jpkcom-rank-math-options`
+- **Text Domain:** `jpkcom-rank-math-options` (declared and loaded, but the plugin currently has **no** translatable strings)
 - **Min PHP:** 8.3 | **Min WP:** 6.9
 - **Required Plugin:** `seo-by-rank-math`
 - **Network:** `true` (can be network-activated)
+
+> **Verified against Rank Math 1.0.275** (released 2026-07-28, the current release at the time of writing). Every hook below carries the Rank Math file and line that consumes it — check those first when a Rank Math update lands, because two of them had silently drifted before 1.0.10.
+>
+> Header mismatch worth knowing: this plugin declares `Tested up to: 7.1`, in line with the rest of the JPKCom fleet, where that value is a statement of intent rather than a measurement. Rank Math itself — a hard dependency via `Requires Plugins` — declares `tested up to 7.0.2`.
 
 ---
 
 ## Architecture
 
-Intentionally minimal. The plugin is a thin wrapper around a single Rank Math filter plus the shared JPKCom GitHub updater class (downstream copy of upstream `jpkcom-post-filter`; do not edit per-plugin). SHA256 checksum verification is **mandatory** — a missing or unfetchable `checksum_sha256` aborts the update — and the verified temp file is returned from `upgrader_pre_download`, so WordPress installs exactly the bytes that were hashed.
+Intentionally minimal: a flat list of filter and action registrations, plus the shared JPKCom GitHub updater class (downstream copy of upstream `jpkcom-post-filter`; do not edit per-plugin). SHA256 checksum verification is **mandatory** — a missing or unfetchable `checksum_sha256` aborts the update — and the verified temp file is returned from `upgrader_pre_download`, so WordPress installs exactly the bytes that were hashed.
 
 ```
 Main file (jpkcom-rank-math-options.php)
 ├── Plugin header (incl. Requires Plugins: seo-by-rank-math, Network: true)
 ├── Constants (JPKCOM_RANK_MATH_OPTIONS_*)
-├── add_filter( 'rank_math/can_edit_file', '__return_true' )
+├── plugins_loaded  → load_plugin_textdomain()
+├── rank_math/can_edit_file                → __return_true
+├── rank_math/frontend/remove_credit_notice → __return_true
+├── rank_math/sitemap/remove_credit         → __return_true
+├── rank_math/llms_txt/remove_credit        → __return_true
+├── option_rank_math_mixpanel_optin         → __return_false  (PHP_INT_MAX)
+├── default_option_rank_math_mixpanel_optin → __return_false  (PHP_INT_MAX)
+├── pre_update_option_rank_math_mixpanel_optin → __return_false (PHP_INT_MAX)
+├── admin_bar_menu  → remove_node( 'rank-math' ) (prio 999)
 └── init @ priority 5: boot JPKComGitPluginUpdater
 ```
+
+Rank Math writes its own hooks through `do_filter( 'frontend/remove_credit_notice' )` and friends; `Hooker::do_filter()` (`includes/traits/class-hooker.php:103`) prefixes `rank_math/`. Grepping the Rank Math source for the full filter name therefore finds nothing — search for the suffix.
 
 ---
 
@@ -93,7 +105,7 @@ jpkcom-rank-math-options/
 
 **Dependabot auto-merge** (`.github/workflows/dependabot-auto-merge.yml`) merges only `semver-patch` and `semver-minor`, and only PRs from `dependabot[bot]` in this repo — never from forks. Major updates get a comment and stay manual. Two repo settings are prerequisites, otherwise this is useless or outright dangerous: "Allow auto-merge" must be enabled, and branch protection must list `CI / Lint & Guards` as a **required status check** — without it `gh pr merge --auto` merges *immediately*, since there is nothing left to wait for. Together with `cooldown: default-days: 7` no action release is adopted during its first week.
 
-Triggered by `release: published` on GitHub. Pipeline:
+Triggered by **pushing a `v*` tag** — that tag push is the only trigger, and the workflow creates the GitHub release itself. Do **not** create the release by hand first. Pipeline:
 
 1. Checkout + setup PHP 8.3, Python 3, Pandoc, jq, GraphViz
 2. Extract metadata/sections from `README.md` into `gh-pages-json/`
@@ -111,14 +123,38 @@ Triggered by `release: published` on GitHub. Pipeline:
 
 ## Filters & actions applied to Rank Math
 
-| Hook | Type | Value | Effect |
-|------|------|-------|--------|
-| `rank_math/can_edit_file` | filter | `__return_true` | Re-enables the robots.txt / .htaccess editors in the Rank Math UI, including on multisite |
-| `rank_math/frontend/remove_credit_notice` | filter | `__return_true` | Removes the "Powered by Rank Math" HTML comment from the frontend source |
-| `rank_math/sitemap/remove_credit` | filter | `__return_true` | Removes the "Generator" credit line from Rank Math's sitemap XML (singular `remove_credit` — verified in `class-sitemap-xml.php`) |
-| `option_rank-math-options-general` | filter | rewrites `usage_tracking` → `'off'` | Forces Rank Math's telemetry off at the option layer. Rank Math's tracker class has no filter; the toggle is a plain option read via `Helper::get_settings()` |
-| `template_redirect` (priority 0) on `/llms.txt` | action | `ob_start()` + regex strip before first `# ` | Removes Rank Math's hardcoded intro paragraph so `llms.txt` starts with the site's H1 heading as the spec expects. The offending line is echoed directly in `class-llms-txt.php::output()` with no filter. |
-| `admin_bar_menu` (priority 999) | action | `$wp_admin_bar->remove_node( 'rank-math' )` | Removes Rank Math's top-level node from the WordPress admin bar. Node ID matches `Admin_Bar_Menu::MENU_IDENTIFIER`. |
+| Hook | Value | Consumed by (Rank Math 1.0.275) | Effect |
+|------|-------|--------------------------------|--------|
+| `rank_math/can_edit_file` | `__return_true` | `Helper::is_edit_allowed()`, `includes/helpers/class-conditional.php:160` | Keeps the robots.txt / .htaccess editors usable — see the caveat below |
+| `rank_math/frontend/remove_credit_notice` | `__return_true` | `Head::credits()`, `includes/frontend/class-head.php:415` | Removes the "Search Engine Optimization by Rank Math" HTML comment |
+| `rank_math/sitemap/remove_credit` | `__return_true` | `class-sitemap-xml.php:113`, `sitemap-xsl.php:126` and `:214` | Removes the generator credit from the sitemap XML and its stylesheet |
+| `rank_math/llms_txt/remove_credit` | `__return_true` | `LLMS_Txt::add_header_content()`, `includes/modules/llms/class-llms-txt.php:160` | Drops the intro line + blank line so `llms.txt` opens with the site H1, as the format expects |
+| `option_rank_math_mixpanel_optin` `default_option_…` `pre_update_option_…` | `__return_false` (`PHP_INT_MAX`) | `Optin::can_track()` / `::is_enabled()`, `vendor/wp-media/wp-mixpanel/src/Optin.php:56` and `:37` | Forces the anonymous usage tracking off, and keeps the stored value from ever becoming true |
+| `admin_bar_menu` (prio 999) | `remove_node( 'rank-math' )` | `Admin_Bar_Menu::MENU_IDENTIFIER`, registered at prio 100 | Removes Rank Math's top-level admin bar node |
+
+### `can_edit_file` overrides a hardening constant — read this before changing it
+
+Rank Math's default is not "hidden on multisite", as this file claimed until 1.0.10. It is:
+
+```php
+( ! defined( 'DISALLOW_FILE_EDIT' ) || ! DISALLOW_FILE_EDIT ) &&
+( ! defined( 'DISALLOW_FILE_MODS' ) || ! DISALLOW_FILE_MODS )
+```
+
+With neither constant defined that is already `true`, so **the filter's only possible effect is to override an explicit hardening setting.** On a site that sets `DISALLOW_FILE_EDIT`, this plugin re-opens Rank Math's `.htaccess` editor for anyone holding Rank Math's own capability — and on Apache, `.htaccess` is effectively server configuration. That is the deliberate purpose of the plugin, but it is a trade, not a convenience. If it should ever be narrowed, the obvious line is to keep overriding `DISALLOW_FILE_EDIT` while respecting the stronger `DISALLOW_FILE_MODS`.
+
+### Two hooks that can look broken but are not
+
+Neither could be demonstrated through output on the `posts.ddev.site` test instance, for reasons outside this plugin. Verify them at the filter level before concluding they are dead:
+
+- **Frontend credit:** `speed-booster-pack` runs an HTML minifier (`includes/classes/class-sbp-html-minifier.php`) that strips HTML comments, so the credit is absent with or without this plugin.
+- **Admin bar node:** Rank Math's own setting `general.admin_bar_menu` was already `false` there, so `Admin_Bar_Menu::add_menu` registers nothing and there is no node left to remove.
+
+### Telemetry: why the option name matters
+
+Up to 1.0.9 this plugin rewrote a `usage_tracking` key inside `rank-math-options-general`. That was inert. The settings field is declared `'save_field' => false` (`includes/settings/general/others.php:99`), is never written to that option — the raw database value has no such key — and its displayed state comes from `escape_cb` reading `get_option( 'rank_math_mixpanel_optin' )`. Nothing consults `rank-math-options-general` for the tracking decision.
+
+Measured against 1.0.275 before the fix: with tracking opted in, `Optin::can_track()` returned `true` while this plugin was active. Filtering the read of `rank_math_mixpanel_optin` covers both `can_track()` and `is_enabled()`; `pre_update_option_*` additionally means an opt-in never lands in the database, so removing this plugin cannot leave tracking switched on behind it.
 
 ---
 
@@ -133,12 +169,26 @@ Triggered by `release: published` on GitHub. Pipeline:
 
 ---
 
+## Tests
+
+`tests/test-hooks.php` runs standalone — no WordPress and no Rank Math. It stubs the WordPress functions the main file touches at load time, requires the plugin, then asserts hook names and priorities and invokes every callback: the three telemetry filters (including that a stored `true` still reads as `false`), the four Rank Math filters, the admin bar node removal, the updater bootstrap priority, the text domain path, and that the version constant matches the header. It also asserts the *absence* of the two constructs 1.0.9 relied on — `template_redirect` buffering and the `option_rank-math-options-general` filter. 17 cases; 6 of them fail against 1.0.9. CI runs it on every pull request and push to `main`.
+
+```bash
+php tests/test-hooks.php   # exit 0 = green
+```
+
+What the suite cannot cover is whether Rank Math still fires these hooks. That is the part that drifts, and it needs a real instance — see the file/line references in the hook table above.
+
+---
+
 ## Release checklist
 
-1. Bump version in three places:
-   - Plugin header `Version:` + `Stable tag:`
+1. Bump the version in five places:
+   - Plugin header `Version:`
+   - Plugin header `Stable tag:`
    - Constant `JPKCOM_RANK_MATH_OPTIONS_VERSION`
-   - `README.md` header (`**Version:**`, `**Stable tag:**`) and `phpdoc.xml` `<version number="…">`
+   - `phpdoc.xml` `<version number="…">`
+   - `README.md` — `**Version:**` and `**Stable tag:**`
 2. Add a `### x.y.z` section to `## Changelog` in `README.md`
-3. Commit, tag `vx.y.z`, push
-4. Publish a GitHub Release from that tag — the workflow builds the ZIP, manifest, docs, and deploys to `gh-pages`
+3. Run `php tests/test-hooks.php`
+4. Commit, then push the tag `vx.y.z` — the workflow builds the ZIP, manifest and docs, creates the release and deploys to `gh-pages`
