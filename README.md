@@ -3,7 +3,7 @@
 **Plugin Name:** JPKCom Rank Math Options  
 **Plugin URI:** https://github.com/JPKCom/jpkcom-rank-math-options  
 **Description:** Opinionated tweaks and options for the Rank Math SEO plugin.  
-**Version:** 1.0.8  
+**Version:** 1.0.9  
 **Author:** Jean Pierre Kolb <jpk@jpkc.com>  
 **Author URI:** https://www.jpkc.com/  
 **Contributors:** JPKCom  
@@ -13,7 +13,7 @@
 **Tested up to:** 7.1  
 **Requires PHP:** 8.3  
 **Network:** true  
-**Stable tag:** 1.0.8  
+**Stable tag:** 1.0.9  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 **Text Domain:** jpkcom-rank-math-options
@@ -79,6 +79,11 @@ Yes. It uses a secure, self-hosted GitHub updater with SHA256 checksum verificat
 ---
 
 ## Changelog
+
+### 1.0.9
+* Changed: the update manifest generator now defaults a missing `Network:` header to false instead of true, matching WordPress' own default. No change for this plugin, which declares `Network: true` explicitly
+* CI: the lint and guard workflow now also runs on pushes to `main`. It only covered pull requests, so a direct push with bypass rights skipped every check
+* Changed: comments, workflow step names and CI output across the repository are now English throughout, and the developer notes in `CLAUDE.md` were translated and trimmed. No effect on the shipped plugin
 
 ### 1.0.8
 * Changed: `Tested up to` raised to WordPress 7.1
