@@ -3,7 +3,7 @@
 **Plugin Name:** JPKCom Rank Math Options  
 **Plugin URI:** https://github.com/JPKCom/jpkcom-rank-math-options  
 **Description:** Opinionated tweaks and options for the Rank Math SEO plugin.  
-**Version:** 1.0.10  
+**Version:** 1.0.11  
 **Author:** Jean Pierre Kolb <jpk@jpkc.com>  
 **Author URI:** https://www.jpkc.com/  
 **Contributors:** JPKCom  
@@ -13,10 +13,11 @@
 **Tested up to:** 7.1  
 **Requires PHP:** 8.3  
 **Network:** true  
-**Stable tag:** 1.0.10  
+**Stable tag:** 1.0.11  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
-**Text Domain:** jpkcom-rank-math-options
+**Text Domain:** jpkcom-rank-math-options  
+**Update URI:** https://github.com/JPKCom/jpkcom-rank-math-options
 
 A small companion plugin that enables Rank Math SEO features that are disabled by default on certain WordPress installations.
 
@@ -86,6 +87,11 @@ Yes. It uses a secure, self-hosted GitHub updater with SHA256 checksum verificat
 ---
 
 ## Changelog
+
+### 1.0.11
+* Security: the plugin header now carries `Update URI: https://github.com/JPKCom/jpkcom-rank-math-options`. Without it, WordPress also asks wordpress.org for updates under this plugin's slug, so a same-named plugin published there with a higher version would be offered as an update of this one. With the header, wordpress.org answers nothing for this plugin and updates come only from this repository
+* Changed: the updater keeps its manifest cache, its failure marker and its fetch lock in site transients. On multisite the network now fetches the manifest once instead of once per site; on a single site nothing changes. The old per-site entries expire on their own within a day
+* Changed: the release workflow downloads phpDocumentor from a fixed GitHub release and verifies its SHA-256 before running it, instead of executing whatever phpdoc.org serves that day. No effect on the shipped plugin
 
 ### 1.0.10
 * Fixed: Rank Math's usage tracking was not actually being switched off. The plugin rewrote a `usage_tracking` key in `rank-math-options-general`, but that settings field is declared `'save_field' => false`, is never stored in that option, and nothing reads the tracking state from it. The real switch is the standalone `rank_math_mixpanel_optin` option, which `Optin::can_track()` and `Optin::is_enabled()` consult. Measured against Rank Math 1.0.275: with tracking opted in, `can_track()` returned **true** despite this plugin being active; it now returns false
